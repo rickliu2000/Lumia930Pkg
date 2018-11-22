@@ -1,0 +1,24 @@
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = Lumia930Pkg
+  PACKAGE_GUID                   = cd560434-f88c-4e47-971b-152fdbfd18df
+  PACKAGE_VERSION                = 0.1
+
+[Includes.common]
+  Include                        # Root include for the package
+
+[Guids.common]
+  gLumia930PkgTokenSpaceGuid = { 0x4c59628e, 0x0a8a, 0x4099, { 0x8d, 0xe5, 0xf2, 0x08, 0xff, 0x80, 0xc4, 0xbf } }
+
+[PcdsFixedAtBuild.common]
+  # Simple FrameBuffer
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferAddress|0x00400000|UINT32|0x99
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferWidth|1080|UINT32|0x100
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferHeight|1920|UINT32|0x101
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferPixelBpp|32|UINT32|0x102
+
+[PcdsFixedAtBuild.common]
+  gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x08000000|UINT32|0x00000015
+  #gArmPlatformTokenSpaceGuid.PcdCPUCoresStackBase|0|UINT64|0x00000009
+  gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x10000|UINT32|0x00000037
+  gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x1000|UINT32|0x0000000A
