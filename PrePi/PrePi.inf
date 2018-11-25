@@ -71,3 +71,5 @@
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString
 
+  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize
+  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize

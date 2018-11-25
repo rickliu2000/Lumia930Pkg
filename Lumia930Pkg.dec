@@ -22,3 +22,6 @@
   #gArmPlatformTokenSpaceGuid.PcdCPUCoresStackBase|0|UINT64|0x00000009
   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x10000|UINT32|0x00000037
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x1000|UINT32|0x0000000A
+ # Memory allocation
+  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x0FF00000|UINT64|0x00000a106
+  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x0FC00000|UINT32|0x00000a107

@@ -69,35 +69,35 @@ UartInit
 VOID
 Main
 (
-    IN  UINTN                     UefiMemoryBase,
-    IN  UINTN                     StacksBase,
-    IN  UINT64 			          StartTimeStamp
+    IN UINTN	UefiMemoryBase,
+	IN UINTN    StackBase,
+	IN UINT64   StartTimeStamp
 )
-{
-    EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
+{   
+	EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
     EFI_STATUS                    Status;
-    UINTN                         StacksSize;
+    UINTN                         StackSize;	
 
     
-    // Initialize UART.
-    UartInit();
-    
-    // Declear the PI/UEFI memory region
+	// Initialize UART.
+	UartInit();
+
+	//Declear the PI/UEFI memory region
     HobList = HobConstructor (
     (VOID*)UefiMemoryBase,
     FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
     (VOID*)UefiMemoryBase,
-    (VOID*)StacksBase  // The top of the UEFI Memory is reserved for the stacks
+    (VOID*)StackBase  // The top of the UEFI Memory is reserved for the stacks
     );
-   // PrePeiSetHobList (HobList);
+    //PrePeiSetHobList (HobList);
     
     DEBUG((
         EFI_D_INFO | EFI_D_LOAD, 
         "UEFI Memory Base = 0x%llx, Size = 0x%llx, Stack Base = 0x%llx, Stack Size = 0x%llx\n",
         UefiMemoryBase,
         FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
-        StacksBase,
-        StacksSize
+        StackBase,
+        StackSize
     ));
     PrePeiSetHobList(HobList);
     // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
@@ -115,12 +115,12 @@ Main
   // Create the Stacks HOB (reserve the memory for all stacks)
   
   if (ArmIsMpCore ()) {
-    StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize) +
+    StackSize = PcdGet32 (PcdCPUCorePrimaryStackSize) +
                  ((FixedPcdGet32 (PcdCoreCount) - 1) * FixedPcdGet32 (PcdCPUCoreSecondaryStackSize));
   } else {
-    StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
+    StackSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   }
-  BuildStackHob (StacksBase, StacksSize);
+  BuildStackHob (StackBase, StackSize);
 
   //TODO: Call CpuPei as a library
   BuildCpuHob (PcdGet8 (PcdPrePiCpuMemorySize), PcdGet8 (PcdPrePiCpuIoSize));
@@ -180,8 +180,8 @@ VOID
 CEntryPoint
 (
     IN  UINTN                     MpId,
-    IN  UINTN                     UefiMemoryBase,
-    IN  UINTN					  StacksBase
+	IN  UINTN  					  UefiMemoryBase,
+	IN  UINTN 					  StackBase
 )
 {
    UINT64 StartTimeStamp;
@@ -218,5 +218,5 @@ CEntryPoint
     }
   }
 
-   Main(UefiMemoryBase, StacksBase, StartTimeStamp);
+   Main(UefiMemoryBase, StackBase, StartTimeStamp);
 }

@@ -24,6 +24,16 @@ ASM_FUNC(_ModuleEntryPoint)
   // Keep a copy of the MpId register value
   mov   r8, r0
 
+
+_StackBase:
+  .quad FixedPcdGet32(PcdPrePiStackBase)
+
+_StackSize:
+  .quad FixedPcdGet32(PcdPrePiStackSize)
+
+
+
+
 _SetSVCMode:
   // Enter SVC mode, Disable FIQ and IRQ
   mov     r1, #(CPSR_MODE_SVC | CPSR_IRQ | CPSR_FIQ)
@@ -111,10 +121,12 @@ _GetStackBase:
   bne   _PrepareArguments
  
 _PrepareArguments:
-  mov   r0, r8
-  mov   r1, r9
-  mov   r2, r10
-  mov   r3, sp
+
+	mov   r0, r8
+	mov   r1, r9
+	mov   r2, r10
+	mov   r3, sp
+
   // Move sec startup address into a data register
   // Ensure we're jumping to FV version of the code (not boot remapped alias)
   ldr   r4, =ASM_PFX(CEntryPoint)

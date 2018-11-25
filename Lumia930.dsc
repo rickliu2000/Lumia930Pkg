@@ -60,14 +60,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId|0x4D4F4351
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x00000001
 
-  #gQcomTokenSpaceGuid.PcdSystemMfrStr|"Qualcomm Inc."
-  #gQcomTokenSpaceGuid.PcdSystemProductNameStr|"Lumia 930"
-  #gQcomTokenSpaceGuid.PcdSystemProductFamilyStr|"MTP"
-  #gQcomTokenSpaceGuid.DisableWriteProtect|TRUE
-
-  # Required by UART library
-  #gQcomTokenSpaceGuid.UartPlatform|"MSM8974"
-
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0
   gEfiMdePkgTokenSpaceGuid.PcdMaximumUnicodeStringLength|1000000
@@ -96,7 +88,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
 
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|0x00C40000
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x72000000         # 2GB
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x80000000         # 2GB
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x00000000
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
   gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|18
@@ -106,9 +98,8 @@
   gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0x09c00000
   # gArmPlatformTokenSpaceGuid.PcdCoreCount|4
 
-  # According to XBL report (S - Core 0 Frequency, 1228 MHz)
-  #gQcomTokenSpaceGuid.PcdAppsProcFrequencyMhz|1228
-
+  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x0FF00000
+  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x0FC00000
 
 
 [LibraryClasses.common]
@@ -191,5 +182,4 @@
 
 
 [Components.common]
-  # Security. To be replaced with general ARM PEI
   Lumia930Pkg/PrePi/PrePi.inf

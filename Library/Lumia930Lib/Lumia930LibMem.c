@@ -14,7 +14,8 @@
 
 #include <Library/ArmPlatformLib.h>
 #include <Library/DebugLib.h>
-
+#include <Library/HobLib.h>
+#include "DeviceMemoryMap.h"
 /**
   Return the Virtual Memory Map of your platform
 
@@ -25,11 +26,75 @@
                                     entry
 
 **/
+
+STATIC
+VOID
+AddHob
+(
+    PARM_MEMORY_REGION_DESCRIPTOR_EX Desc
+)
+{
+	BuildResourceDescriptorHob(
+		Desc->ResourceType,
+		Desc->ResourceAttribute,
+		Desc->Address,
+		Desc->Length
+	);
+
+	BuildMemoryAllocationHob(
+		Desc->Address,
+		Desc->Length,
+		Desc->MemoryType
+	);
+}
+
+
 VOID
 ArmPlatformGetVirtualMemoryMap (
   IN ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
   )
 {
   //TO-DO:ADD MEMORY MAP HERE
-  ASSERT(0);
+    PARM_MEMORY_REGION_DESCRIPTOR_EX MemoryDescriptorEx = gDeviceMemoryDescriptorEx;
+    ARM_MEMORY_REGION_DESCRIPTOR MemoryDescriptor[MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT];
+    UINTN Index = 0;
+
+    // Ensure PcdSystemMemorySize has been set
+    //ASSERT (PcdGet64 (PcdSystemMemorySize) != 0);
+
+    // Run through each memory descriptor
+    while (MemoryDescriptorEx->Length != 0)
+    {
+        switch (MemoryDescriptorEx->HobOption)
+        {
+            case AddMem:
+			case AddDev:
+                AddHob(MemoryDescriptorEx);
+                break;
+            case NoHob:
+            default:
+                goto update;
+        }
+
+    update:
+        ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
+
+        MemoryDescriptor[Index].PhysicalBase = MemoryDescriptorEx->Address;
+        MemoryDescriptor[Index].VirtualBase = MemoryDescriptorEx->Address;
+        MemoryDescriptor[Index].Length = MemoryDescriptorEx->Length;
+		MemoryDescriptor[Index].Attributes = MemoryDescriptorEx->ArmAttributes;
+
+        Index++;
+        MemoryDescriptorEx++;
+    }
+
+    // Last one (terminator)
+    ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
+    MemoryDescriptor[Index].PhysicalBase = 0;
+    MemoryDescriptor[Index].VirtualBase = 0;
+    MemoryDescriptor[Index].Length = 0;
+    MemoryDescriptor[Index].Attributes = 0;
+    
+    *VirtualMemoryMap = MemoryDescriptor;
+  //ASSERT(0);
 }
