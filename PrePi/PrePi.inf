@@ -61,7 +61,6 @@
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize
   gArmPlatformTokenSpaceGuid.PcdCoreCount
 
-  gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize  
 
 [Pcd]

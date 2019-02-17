@@ -53,8 +53,8 @@ _SetupStackPosition:
   // r1 = SystemMemoryTop
 
   // Calculate Top of the Firmware Device
-  MOV32 (r2, FixedPcdGet32(PcdFdBaseAddress))
-  MOV32 (r3, FixedPcdGet32(PcdFdSize) - 1)
+  ldr   r2, _StackBase
+  ldr   r3, _StackSize
   add   r3, r3, r2      // r3 = FdTop = PcdFdBaseAddress + PcdFdSize
 
   // UEFI Memory Size (stacks are allocated in this region)
@@ -81,6 +81,7 @@ _SetupStack:
   // top of the memory space)
   adds  r9, r1, #1
   bcs   _SetupOverflowStack
+  add   sp, r3, #0
 
 _SetupAlignedStack:
   mov   r1, r9
@@ -123,8 +124,8 @@ _GetStackBase:
 _PrepareArguments:
 
 	mov   r0, r8
-	mov   r1, r9
-	mov   r2, r10
+	ldr   r1, _StackBase
+	ldr   r2, _StackSize
 	mov   r3, sp
 
   // Move sec startup address into a data register

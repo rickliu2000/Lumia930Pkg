@@ -69,39 +69,49 @@ UartInit
 VOID
 Main
 (
-    IN UINTN	UefiMemoryBase,
-	IN UINTN    StackBase,
+    	IN VOID	    *StackBase,
+	IN UINTN    StackSize,
 	IN UINT64   StartTimeStamp
 )
 {   
 	EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
     EFI_STATUS                    Status;
-    UINTN                         StackSize;	
 
-    
-	// Initialize UART.
-	UartInit();
+    UINTN                           MemoryBase = 0;
+    UINTN                           MemorySize = 0;
+    UINTN                           UefiMemoryBase = 0;
+    UINTN 			    UefiMemorySize = 0;
 
-	//Declear the PI/UEFI memory region
+    // Initialize UART.
+    UartInit();
+
+    // Declare UEFI region
+    MemoryBase      = FixedPcdGet32(PcdSystemMemoryBase);
+    MemorySize      = FixedPcdGet32(PcdSystemMemorySize);
+    UefiMemoryBase  = MemoryBase + FixedPcdGet32(PcdPreAllocatedMemorySize);
+    UefiMemorySize  = FixedPcdGet32(PcdUefiMemPoolSize);
+    StackBase       = (VOID*) (UefiMemoryBase + UefiMemorySize - StackSize);
+
+    //Declear the PI/UEFI memory region
     HobList = HobConstructor (
     (VOID*)UefiMemoryBase,
-    FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
+    UefiMemorySize,
     (VOID*)UefiMemoryBase,
-    (VOID*)StackBase  // The top of the UEFI Memory is reserved for the stacks
+    StackBase  // The top of the UEFI Memory is reserved for the stacks
     );
     //PrePeiSetHobList (HobList);
-    
+
     DEBUG((
         EFI_D_INFO | EFI_D_LOAD, 
-        "UEFI Memory Base = 0x%llx, Size = 0x%llx, Stack Base = 0x%llx, Stack Size = 0x%llx\n",
+        "UEFI Memory Base = 0x%lx, Size = 0x%lx, Stack Base = 0x%lx, Stack Size = 0x%lx\n",
         UefiMemoryBase,
-        FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
+        UefiMemorySize,
         StackBase,
         StackSize
     ));
     PrePeiSetHobList(HobList);
     // Initialize MMU and Memory HOBs (Resource Descriptor HOBs)
-    Status = MemoryPeim (UefiMemoryBase, FixedPcdGet32 (PcdSystemMemoryUefiRegionSize));
+    Status = MemoryPeim (UefiMemoryBase, UefiMemorySize);
     if (EFI_ERROR(Status))
     {
         DEBUG((EFI_D_ERROR, "Failed to configure MMU\n"));
@@ -120,11 +130,10 @@ Main
   } else {
     StackSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   }
-  BuildStackHob (StackBase, StackSize);
+  BuildStackHob ((UINTN)StackBase, StackSize);
 
   //TODO: Call CpuPei as a library
-  BuildCpuHob (PcdGet8 (PcdPrePiCpuMemorySize), PcdGet8 (PcdPrePiCpuIoSize));
-  
+  BuildCpuHob (ArmGetPhysicalAddressBits (), PcdGet8 (PcdPrePiCpuIoSize));
   // Store timer value logged at the beginning of firmware image execution
   //Performance.ResetEnd = GetTimeInNanoSecond (StartTimeStamp);
 
@@ -179,9 +188,9 @@ Main
 VOID
 CEntryPoint
 (
-    IN  UINTN                     MpId,
-	IN  UINTN  					  UefiMemoryBase,
-	IN  UINTN 					  StackBase
+    	IN  UINTN                     			  MpId,
+	IN  VOID  					  *StackBase,
+	IN  UINTN 					  StackSize
 )
 {
    UINT64 StartTimeStamp;
@@ -218,5 +227,5 @@ CEntryPoint
     }
   }
 
-   Main(UefiMemoryBase, StackBase, StartTimeStamp);
+   Main(StackBase, StackSize, StartTimeStamp);
 }

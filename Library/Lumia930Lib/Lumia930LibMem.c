@@ -48,7 +48,6 @@ AddHob
 	);
 }
 
-
 VOID
 ArmPlatformGetVirtualMemoryMap (
   IN ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
