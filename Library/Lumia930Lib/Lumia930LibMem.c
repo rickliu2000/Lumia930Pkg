@@ -1,6 +1,7 @@
 /** @file
 *
 *  Copyright (c) 2011, ARM Limited. All rights reserved.
+*  Copyright (c) 2019, RUIKAI LIU and MR TUNNEL. All rights reserved.
 *
 *  This program and the accompanying materials
 *  are licensed and made available under the terms and conditions of the BSD License
@@ -15,7 +16,7 @@
 #include <Library/ArmPlatformLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
-#include "DeviceMemoryMap.h"
+#include <Configuration/DeviceMemoryMap.h>
 /**
   Return the Virtual Memory Map of your platform
 
@@ -57,9 +58,6 @@ ArmPlatformGetVirtualMemoryMap (
     PARM_MEMORY_REGION_DESCRIPTOR_EX MemoryDescriptorEx = gDeviceMemoryDescriptorEx;
     ARM_MEMORY_REGION_DESCRIPTOR MemoryDescriptor[MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT];
     UINTN Index = 0;
-
-    // Ensure PcdSystemMemorySize has been set
-    //ASSERT (PcdGet64 (PcdSystemMemorySize) != 0);
 
     // Run through each memory descriptor
     while (MemoryDescriptorEx->Length != 0)

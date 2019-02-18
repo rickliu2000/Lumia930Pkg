@@ -1,6 +1,7 @@
 /** @file
 *
 *  Copyright (c) 2011-2015, ARM Limited. All rights reserved.
+*  Copyright (c) 2019, RUIKAI LIU and MR TUNNEL. All rights reserved.
 *
 *  This program and the accompanying materials
 *  are licensed and made available under the terms and conditions of the BSD License
@@ -21,20 +22,18 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
-#include <Configuration/DeviceMemoryMap.h>
-
 extern UINT64 mSystemMemoryEnd;
 
 VOID
 BuildMemoryTypeInformationHob (
   VOID
-  );
+);
 
 STATIC
 VOID
 InitMmu (
   IN ARM_MEMORY_REGION_DESCRIPTOR  *MemoryTable
-  )
+)
 {
 
   VOID                          *TranslationTableBase;
@@ -49,27 +48,6 @@ InitMmu (
   }
 }
 
-STATIC
-VOID
-AddHob
-(
-    PARM_MEMORY_REGION_DESCRIPTOR_EX Desc
-)
-{
-	BuildResourceDescriptorHob(
-		Desc->ResourceType,
-		Desc->ResourceAttribute,
-		Desc->Address,
-		Desc->Length
-	);
-
-	BuildMemoryAllocationHob(
-		Desc->Address,
-		Desc->Length,
-		Desc->MemoryType
-	);
-}
-
 EFI_STATUS
 EFIAPI
 MemoryPeim (
@@ -77,54 +55,20 @@ MemoryPeim (
   IN UINT64                             UefiMemorySize
   )
 {
+  ARM_MEMORY_REGION_DESCRIPTOR *MemoryTable;
 
-  PARM_MEMORY_REGION_DESCRIPTOR_EX MemoryDescriptorEx = gDeviceMemoryDescriptorEx;
-  ARM_MEMORY_REGION_DESCRIPTOR MemoryDescriptor[MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT];
-  UINTN Index = 0;
+  // Get Virtual Memory Map from the Platform Library
+  ArmPlatformGetVirtualMemoryMap (&MemoryTable);
 
   // Ensure PcdSystemMemorySize has been set
   ASSERT (PcdGet64 (PcdSystemMemorySize) != 0);
 
-    // Run through each memory descriptor
-    while (MemoryDescriptorEx->Length != 0)
-    {
-        switch (MemoryDescriptorEx->HobOption)
-        {
-            case AddMem:
-			case AddDev:
-                AddHob(MemoryDescriptorEx);
-                break;
-            case NoHob:
-            default:
-                goto update;
-        }
+  InitMmu (MemoryTable);
 
-    update:
-        ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
-
-        MemoryDescriptor[Index].PhysicalBase = MemoryDescriptorEx->Address;
-        MemoryDescriptor[Index].VirtualBase = MemoryDescriptorEx->Address;
-        MemoryDescriptor[Index].Length = MemoryDescriptorEx->Length;
-		MemoryDescriptor[Index].Attributes = MemoryDescriptorEx->ArmAttributes;
-
-        Index++;
-        MemoryDescriptorEx++;
-    }
-
-    // Last one (terminator)
-    ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
-    MemoryDescriptor[Index].PhysicalBase = 0;
-    MemoryDescriptor[Index].VirtualBase = 0;
-    MemoryDescriptor[Index].Length = 0;
-    MemoryDescriptor[Index].Attributes = 0;
-    
-    InitMmu (MemoryDescriptor);
-
-    if (FeaturePcdGet (PcdPrePiProduceMemoryTypeInformationHob)) 
-    {
+  if (FeaturePcdGet (PcdPrePiProduceMemoryTypeInformationHob)){
         // Optional feature that helps prevent EFI memory map fragmentation.
-        BuildMemoryTypeInformationHob();
-    }
+  	BuildMemoryTypeInformationHob();
+  }
 
   return EFI_SUCCESS;
 }
