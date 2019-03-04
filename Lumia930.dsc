@@ -30,14 +30,14 @@
   FLASH_DEFINITION               = Lumia930Pkg/Lumia930.fdf
 
 [BuildOptions.common]
-  GCC:*_*_ARM_CC_FLAGS =-fno-stack-protector
-  GCC:*_*_ARM_DLINK_FLAGS =-fno-stack-protector
+  GCC:*_*_ARM_CC_FLAGS = -fno-stack-protector
+  GCC:*_*_ARM_DLINK_FLAGS = -fno-stack-protector
 
 [BuildOptions.common.EDKII.DXE_CORE,BuildOptions.common.EDKII.DXE_DRIVER,BuildOptions.common.EDKII.UEFI_DRIVER,BuildOptions.common.EDKII.UEFI_APPLICATION]
   GCC:*_*_*_DLINK_FLAGS = -z common-page-size=0x1000 -fno-stack-protector
 
 [BuildOptions.common.EDKII.DXE_RUNTIME_DRIVER]
-  GCC:*_*_ARM_DLINK_FLAGS = -z common-page-size=0x1000 -fstack-protector-all -fstack-protector
+  GCC:*_*_ARM_DLINK_FLAGS = -z common-page-size=0x1000 -fstack-protector
   RVCT:*_*_ARM_DLINK_FLAGS = --scatter $(EDK_TOOLS_PATH)/Scripts/Rvct-Align4K.sct
 
 [PcdsFeatureFlag.common]
@@ -93,14 +93,32 @@
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|19200000
   gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|18
   gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|19
-  gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0x09bc0000
-  gArmTokenSpaceGuid.PcdGicDistributorBase|0x09bc0000
-  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0x09c00000
-  # gArmPlatformTokenSpaceGuid.PcdCoreCount|4
+  gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0xF9000000
+  gArmTokenSpaceGuid.PcdGicDistributorBase|0xF9000000
+  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0xF9000000
+  gArmPlatformTokenSpaceGuid.PcdCoreCount|4
 
-  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x0FF00000
-  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x0FC00000
+  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x7CD00000 #0FF00000
+  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x03300000
 
+  ## Default Terminal Type
+  ## 0-PCANSI, 1-VT100, 2-VT00+, 3-UTF8, 4-TTYTERM
+  gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
+
+  # Boot Manager
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile|{ 0x83, 0xA5, 0x04, 0x7C, 0x3E, 0x9E, 0x1C, 0x4F, 0xAD, 0x65, 0xE0, 0x52, 0x68, 0xD0, 0xB4, 0xD1 }
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|5
+
+[PcdsDynamicDefault.common]
+  #
+  # Set video resolution for boot options and for text setup.
+  # PlatformDxe can set the former at runtime.
+  #
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|1080
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|1920
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|1080
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|1920
 
 [LibraryClasses.common]
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
@@ -125,9 +143,9 @@
   CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
   DefaultExceptionHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
-  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
@@ -139,7 +157,6 @@
   TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   LzmaDecompressLib|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
-  MemoryInitPeiLib|Lumia930Pkg/Library/MemoryInitPeiLib/PeiMemoryAllocationLib.inf
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
   DpcLib|MdeModulePkg/Library/DxeDpcLib/DxeDpcLib.inf
   UdpIoLib|MdeModulePkg/Library/DxeUdpIoLib/DxeUdpIoLib.inf
@@ -149,7 +166,6 @@
   PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
-  PlatformPeiLib|ArmPlatformPkg/PlatformPei/PlatformPeiLib.inf
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
   PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
   PrePiMemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
@@ -170,8 +186,19 @@
   TpmMeasurementLib|MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
   AuthVariableLib|MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
   VarCheckLib|MdeModulePkg/Library/VarCheckLib/VarCheckLib.inf
+#  BaseStackCheckLib|MdePkg/Library/BaseStackCheckLib/BaseStackCheckLib.inf
+#  FBPTLib|DragonboardVendorPkg/Library/FBPTLib/FBPTLib.inf
+#  QcomBaseLib|DragonboardVendorPkg/Library/QcomBaseLib/QcomBaseLib.inf
+#  ProcLib|DragonboardVendorPkg/Library/ProcLib/ProcLib.inf
+#  ShLib|DragonboardVendorPkg/Library/ShLib/ShLibMgr.inf
+#  TargetResetLib|DragonboardVendorPkg/Library/TargetResetLib/TargetResetLib.inf
+#  SPMILib|DragonboardPkg/Library/SPMILibV2/SPMILib.inf
+#  PmicShutdownLibBoot|DragonboardVendorPkg/Library/PmicShutdownLib/PmicShutdownBoottimeLib.inf
 
   SerialPortLib|Lumia930Pkg/Library/FrameBufferSerialPortLib/FrameBufferSerialPortLib.inf
+  MemoryInitPeiLib|Lumia930Pkg/Library/MemoryInitPeiLib/PeiMemoryAllocationLib.inf
+  PlatformPeiLib|Lumia930Pkg/Library/PlatformPeiLib/PlatformPeiLib.inf
+  PlatformBootManagerLib|Lumia930Pkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
 
 [LibraryClasses.common.SEC]
   HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
@@ -180,6 +207,154 @@
   PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
 
+[LibraryClasses.common.DXE_CORE]
+  HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
+  MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
+  DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
+  ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
+  PerformanceLib|MdeModulePkg/Library/DxeCorePerformanceLib/DxeCorePerformanceLib.inf
+
+[LibraryClasses.common.DXE_DRIVER]
+  ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
+  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
+  PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
+  UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+# OfflineCrashDumpLib|DragonboardVendorPkg/Library/OfflineCrashDumpLib/OfflineCrashDumpDxeLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+
+[LibraryClasses.common.UEFI_APPLICATION]
+  UefiDecompressLib|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
+  PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
+  ShellLib|ShellPkg/Library/UefiShellLib/UefiShellLib.inf
+  FileHandleLib|MdePkg/Library/UefiFileHandleLib/UefiFileHandleLib.inf
+  ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+
+[LibraryClasses.common.UEFI_DRIVER]
+  ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
+  UefiDecompressLib|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
+  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+
+[LibraryClasses.common.DXE_RUNTIME_DRIVER]
+  HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
+  CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
+  EfiResetSystemLib|ArmPkg/Library/ArmPsciResetSystemLib/ArmPsciResetSystemLib.inf
+  ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
+  ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
 [Components.common]
   Lumia930Pkg/PrePi/PrePi.inf
+
+
+  # DXE
+  MdeModulePkg/Core/Dxe/DxeMain.inf {
+    <LibraryClasses>
+    NULL|MdeModulePkg/Library/DxeCrc32GuidedSectionExtractLib/DxeCrc32GuidedSectionExtractLib.inf
+    NULL|MdeModulePkg/Library/DxeCrc32GuidedSectionExtractLib/DxeCrc32GuidedSectionExtractLib.inf
+    NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+  }
+
+  # PCD Database
+  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf {
+    <LibraryClasses>
+    PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+  }
+
+  # Processor Core Services
+  ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+  ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+  ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+  EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
+  EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
+  EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf {
+    <LibraryClasses>
+      RealTimeClockLib|ArmVirtPkg/Library/XenRealTimeClockLib/XenRealTimeClockLib.inf
+  }
+
+  # Runtime Services
+  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+  # TODO: Replace with actual Variable Services
+  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+
+  # Security Stub
+  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+
+  # Graphics Driver
+  Lumia930Pkg/Driver/SimpleFbDxe/SimpleFbDxe.inf
+
+  # BDS
+  MdeModulePkg/Universal/PrintDxe/PrintDxe.inf
+  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+  MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
+  MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+  MdeModulePkg/Application/UiApp/UiApp.inf {
+    <LibraryClasses>
+      NULL|MdeModulePkg/Library/DeviceManagerUiLib/DeviceManagerUiLib.inf
+      NULL|MdeModulePkg/Library/BootManagerUiLib/BootManagerUiLib.inf
+      NULL|MdeModulePkg/Library/BootMaintenanceManagerUiLib/BootMaintenanceManagerUiLib.inf
+  }
+  Lumia930Pkg/Driver/LogoDxe/LogoDxe.inf
+
+  # Disk IO
+  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
+  FatPkg/EnhancedFatDxe/Fat.inf
+  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+
+  # Networking
+  MdeModulePkg/Universal/Network/DpcDxe/DpcDxe.inf
+  MdeModulePkg/Universal/Network/ArpDxe/ArpDxe.inf
+  MdeModulePkg/Universal/Network/Dhcp4Dxe/Dhcp4Dxe.inf
+  MdeModulePkg/Universal/Network/Ip4Dxe/Ip4Dxe.inf
+  MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+  MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+  MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+  NetworkPkg/TcpDxe/TcpDxe.inf
+  MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
+  
+  # ACPI AND SMBIOS
+  Lumia930Pkg/Driver/SmBiosTableDxe/SmBiosTableDxe.inf
+  # Shell
+  ShellPkg/Application/Shell/Shell.inf {
+    <LibraryClasses>
+      ShellCommandLib|ShellPkg/Library/UefiShellCommandLib/UefiShellCommandLib.inf
+      NULL|ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellLevel1CommandsLib/UefiShellLevel1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellLevel3CommandsLib/UefiShellLevel3CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellDriver1CommandsLib/UefiShellDriver1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellDebug1CommandsLib/UefiShellDebug1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellInstall1CommandsLib/UefiShellInstall1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
+      HandleParsingLib|ShellPkg/Library/UefiHandleParsingLib/UefiHandleParsingLib.inf
+      PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+      BcfgCommandLib|ShellPkg/Library/UefiShellBcfgCommandLib/UefiShellBcfgCommandLib.inf
+
+    <PcdsFixedAtBuild>
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
+      gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
+      gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|8000
+  }

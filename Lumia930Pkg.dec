@@ -16,12 +16,12 @@
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferWidth|1080|UINT32|0x100
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferHeight|1920|UINT32|0x101
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferPixelBpp|32|UINT32|0x102
-
-[PcdsFixedAtBuild.common]
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferVisibleWidth|1080|UINT32|0x103
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferVisibleHeight|1920|UINT32|0x104
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x08000000|UINT32|0x00000015
-  #gArmPlatformTokenSpaceGuid.PcdCPUCoresStackBase|0|UINT64|0x00000009
+  #gArmPlatformTokenSpaceGuid.PcdCPUCoresStackBase|0x00C00000|UINT64|0x00000009
   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x10000|UINT32|0x00000037
-  gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x1000|UINT32|0x0000000A
+  gArmPlatformTokenSpaceGuid.PcdCPUCoreSecondaryStackSize|0x10000|UINT32|0x0000000A
  # Memory allocation
-  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x0FF00000|UINT64|0x00000a106
-  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x0FC00000|UINT32|0x00000a107
+  gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x7CD00000|UINT64|0x00000a106
+  gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x03300000|UINT32|0x00000a107

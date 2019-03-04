@@ -26,3 +26,5 @@
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferWidth
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferHeight
   gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferPixelBpp
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferVisibleWidth
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferVisibleHeight

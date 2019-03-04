@@ -56,12 +56,12 @@ UartInit
     VOID
 )
 {
-   
+
     SerialPortInitialize();
     DEBUG ((EFI_D_ERROR, "\nTianoCore on Nokia Lumia 930 (ARM)\n"));
-    DEBUG ((EFI_D_ERROR,  "Firmware version %s built %a %a\n\n", 
-	        (CHAR16*) PcdGetPtr(PcdFirmwareVersionString), 
-			        __TIME__, 
+    DEBUG ((EFI_D_ERROR,  "Firmware version %s built %a %a\n\n",
+	        (CHAR16*) PcdGetPtr(PcdFirmwareVersionString),
+			        __TIME__,
 				__DATE__
 	));
 }
@@ -73,7 +73,7 @@ Main
 	IN UINTN    StackSize,
 	IN UINT64   StartTimeStamp
 )
-{   
+{
 	EFI_HOB_HANDOFF_INFO_TABLE*   HobList;
     EFI_STATUS                    Status;
 
@@ -101,9 +101,11 @@ Main
     );
     //PrePeiSetHobList (HobList);
 
+    StackSize = FixedPcdGet32 (PcdCoreCount) * PcdGet32 (PcdCPUCorePrimaryStackSize);
+
     DEBUG((
-        EFI_D_INFO | EFI_D_LOAD, 
-        "UEFI Memory Base = 0x%lx, Size = 0x%lx, Stack Base = 0x%lx, Stack Size = 0x%lx\n",
+        EFI_D_INFO | EFI_D_LOAD,
+        "UEFI Memory Base = 0x%p, Size = 0x%p, Stack Base = 0x%p, Stack Size = 0x%p\n",
         UefiMemoryBase,
         UefiMemorySize,
         StackBase,
@@ -123,13 +125,8 @@ Main
 
 
   // Create the Stacks HOB (reserve the memory for all stacks)
-  
-  if (ArmIsMpCore ()) {
-    StackSize = PcdGet32 (PcdCPUCorePrimaryStackSize) +
-                 ((FixedPcdGet32 (PcdCoreCount) - 1) * FixedPcdGet32 (PcdCPUCoreSecondaryStackSize));
-  } else {
-    StackSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
-  }
+
+
   BuildStackHob ((UINTN)StackBase, StackSize);
 
   //TODO: Call CpuPei as a library
@@ -178,7 +175,7 @@ Main
        DEBUG((EFI_D_INFO | EFI_D_LOAD, "Loading DXE Core\n"));
   }
 
-    
+
 
 
     // We are done
