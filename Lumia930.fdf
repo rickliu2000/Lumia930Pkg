@@ -53,6 +53,15 @@ READ_LOCK_STATUS   = TRUE
   INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
   INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
 
+  # SoC Drivers (Cross-referenced from EFIDroid and Ben)
+  INF Lumia930Pkg/Driver/BamDxe/BamDxe.inf
+  INF Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmDxe.inf
+  INF Lumia930Pkg/GPLDriver/GpioTlmmInterruptDxe/GpioTlmmInterruptDxe.inf
+  INF Lumia930Pkg/Driver/SpmiDxe/SpmiDxe.inf
+  INF Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Dxe.inf
+  INF Lumia930Pkg/Driver/GenericKeypadDeviceDxe/GenericKeypadDeviceDxe.inf
+  INF Lumia930Pkg/Driver/KeypadDxe/KeypadDxe.inf
+
   # Runtime Services
   INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf

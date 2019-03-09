@@ -1,0 +1,27 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BamDxe
+  FILE_GUID                      = 6914BF99-1BAB-4042-A266-B206374E0239
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+  ENTRY_POINT                    = BamDxeInitialize
+
+[Sources.common]
+  Driver.c
+  bam.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  Lumia930Pkg/Lumia930Pkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  IoLib
+
+[Protocols]
+  gQcomBamProtocolGuid
+
+[Depex]
+  TRUE

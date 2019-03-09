@@ -101,6 +101,41 @@
   gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x7CD00000 #0FF00000
   gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize|0x03300000
 
+
+  # SoC Drivers GPIO TLMM
+  gQcomTokenSpaceGuid.PcdGpioTlmmBaseAddress|0xFD510000
+  gQcomTokenSpaceGuid.PcdGpioTlmmSummaryIrq|240
+  gQcomTokenSpaceGuid.PcdGpioTlmmIoOffset|0x1004
+  gQcomTokenSpaceGuid.PcdGpioTlmmIoElementSize|0x10
+  gQcomTokenSpaceGuid.PcdGpioTlmmCtlOffset|0x1000
+  gQcomTokenSpaceGuid.PcdGpioTlmmCtlElementSize|0x10
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrCfgOffset|0x1008
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrCfgElementSize|0x10
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrStatusOffset|0x100c
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrStatusElementSize|0x10
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrTargetOffset|0x1008
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrTargetElementSize|0x10
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrEnableBit|0
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrStatusBit|0
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrAckHigh|FALSE
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrTargetBit|5
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrTargetKpssValue|4
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrRawStatusBit|4
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrPolarityBit|1
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrDetectionBit|2
+  gQcomTokenSpaceGuid.PcdGpioTlmmIntrDetectionWidth|2
+  gQcomTokenSpaceGuid.PcdGpioTlmmInBit|0
+  gQcomTokenSpaceGuid.PcdGpioTlmmOutBit|1
+  gQcomTokenSpaceGuid.PcdGpioTlmmOeBit|9
+  gQcomTokenSpaceGuid.PcdGpioTlmmMuxBit|2
+  gQcomTokenSpaceGuid.PcdGpioTlmmDrvBit|6
+  gQcomTokenSpaceGuid.PcdGpioTlmmPullBit|0
+  gQcomTokenSpaceGuid.PcdGpioTlmmNumFunctions|12
+
+  # SoC Drivers SPMI
+  gQcomTokenSpaceGuid.PcdSpmiBaseAddress|0xFC4C0000
+
+
   ## Default Terminal Type
   ## 0-PCANSI, 1-VT100, 2-VT00+, 3-UTF8, 4-TTYTERM
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
@@ -119,6 +154,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|1920
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution|1080
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution|1920
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow|160
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn|120
 
 [LibraryClasses.common]
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
@@ -195,10 +232,18 @@
 #  SPMILib|DragonboardPkg/Library/SPMILibV2/SPMILib.inf
 #  PmicShutdownLibBoot|DragonboardVendorPkg/Library/PmicShutdownLib/PmicShutdownBoottimeLib.inf
 
+  # Platform Drivers
   SerialPortLib|Lumia930Pkg/Library/FrameBufferSerialPortLib/FrameBufferSerialPortLib.inf
   MemoryInitPeiLib|Lumia930Pkg/Library/MemoryInitPeiLib/PeiMemoryAllocationLib.inf
   PlatformPeiLib|Lumia930Pkg/Library/PlatformPeiLib/PlatformPeiLib.inf
   PlatformBootManagerLib|Lumia930Pkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
+
+  # SoC Drivers
+  QTimerLib|Lumia930Pkg/Library/QTimerLib/QTimerLib.inf
+  InterruptsLib|Lumia930Pkg/Library/InterruptsLib/InterruptsLib.inf
+  MallocLib|Lumia930Pkg/Library/MallocLib/MallocLib.inf
+  KeypadDeviceHelperLib|Lumia930Pkg/Library/KeypadDeviceHelperLib/KeypadDeviceHelperLib.inf
+  KeypadDeviceImplLib|Lumia930Pkg/Library/KeypadDeviceImplLib/KeypadDeviceImplLib.inf
 
 [LibraryClasses.common.SEC]
   HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
@@ -206,6 +251,10 @@
   PrePiMemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
   PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+  # SoC Drivers
+  GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmImplLib.inf
+  SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiImplLib.inf
+  Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41ImplLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -225,6 +274,12 @@
   UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
 # OfflineCrashDumpLib|DragonboardVendorPkg/Library/OfflineCrashDumpLib/OfflineCrashDumpDxeLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  # SoC Drivers
+  QcomDxeTimerLib|Lumia930Pkg/Library/QTimerLib/QcomQTimerDxeTimerLib.inf
+  GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
+  SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
+  Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
+
 
 [LibraryClasses.common.UEFI_APPLICATION]
   UefiDecompressLib|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
@@ -236,6 +291,11 @@
   ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
+  # SoC Drivers
+  GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
+  SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
+  Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
+
 [LibraryClasses.common.UEFI_DRIVER]
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
   UefiDecompressLib|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
@@ -244,6 +304,11 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+
+  # SoC Drivers
+  GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
+  SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
+  Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
@@ -283,6 +348,17 @@
     <LibraryClasses>
       RealTimeClockLib|ArmVirtPkg/Library/XenRealTimeClockLib/XenRealTimeClockLib.inf
   }
+
+  # SoC Drivers (Cross-referenced from EFIDroid and Ben)
+  Lumia930Pkg/Driver/BamDxe/BamDxe.inf
+  Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmDxe.inf
+  Lumia930Pkg/GPLDriver/GpioTlmmInterruptDxe/GpioTlmmInterruptDxe.inf
+  Lumia930Pkg/Driver/SpmiDxe/SpmiDxe.inf
+  Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Dxe.inf
+  Lumia930Pkg/Driver/GenericKeypadDeviceDxe/GenericKeypadDeviceDxe.inf
+  Lumia930Pkg/Driver/KeypadDxe/KeypadDxe.inf
+
+
 
   # Runtime Services
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf

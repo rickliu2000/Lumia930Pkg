@@ -331,6 +331,35 @@ AddOutput (
 
 STATIC
 VOID
+EFIAPI
+AddInput (
+  IN EFI_HANDLE   Handle,
+  IN CONST CHAR16 *ReportText
+  )
+{
+  EFI_STATUS               Status;
+  EFI_DEVICE_PATH_PROTOCOL *DevicePath;
+
+  DevicePath = DevicePathFromHandle (Handle);
+  if (DevicePath == NULL) {
+    DEBUG ((EFI_D_ERROR, "%a: %s: handle %p: device path not found\n",
+      __FUNCTION__, ReportText, Handle));
+    return;
+  }
+
+  Status = EfiBootManagerUpdateConsoleVariable (ConIn, DevicePath, NULL);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((EFI_D_ERROR, "%a: %s: adding to ConIn: %r\n", __FUNCTION__,
+      ReportText, Status));
+    return;
+  }
+
+  DEBUG ((EFI_D_VERBOSE, "%a: %s: added to ConOut and ErrOut\n", __FUNCTION__,
+    ReportText));
+}
+
+STATIC
+VOID
 PlatformRegisterFvBootOption (
   CONST EFI_GUID                   *FileGuid,
   CHAR16                           *Description,
@@ -491,45 +520,45 @@ GetPlatformOptions (
   EfiBootManagerFreeLoadOptions (BootOptions, BootCount);
   FreePool (BootKeys);
 }
-
 STATIC
 VOID
 PlatformRegisterOptionsAndKeys (
   VOID
   )
 {
+  GetPlatformOptions();
+
+  PlatformRegisterFvBootOption(
+      &gUefiShellFileGuid,
+      L"UEFI Shell",
+      LOAD_OPTION_ACTIVE
+  );
+}
+
+STATIC
+VOID
+PlatformRegisterSetupKey(
+  VOID
+)
+{
   EFI_STATUS                   Status;
-  EFI_INPUT_KEY                Enter;
-  EFI_INPUT_KEY                F2;
-  EFI_INPUT_KEY                Esc;
+  EFI_INPUT_KEY                PowerBtn;
   EFI_BOOT_MANAGER_LOAD_OPTION BootOption;
 
-  GetPlatformOptions ();
-
   //
-  // Register ENTER as CONTINUE key
+  // Map Power to Boot Manager Menu
   //
-  Enter.ScanCode    = SCAN_NULL;
-  Enter.UnicodeChar = CHAR_CARRIAGE_RETURN;
-  Status = EfiBootManagerRegisterContinueKeyOption (0, &Enter, NULL);
-  ASSERT_EFI_ERROR (Status);
-
-  //
-  // Map F2 and ESC to Boot Manager Menu
-  //
-  F2.ScanCode     = SCAN_F2;
-  F2.UnicodeChar  = CHAR_NULL;
-  Esc.ScanCode    = SCAN_ESC;
-  Esc.UnicodeChar = CHAR_NULL;
-  Status = EfiBootManagerGetBootManagerMenu (&BootOption);
-  ASSERT_EFI_ERROR (Status);
-  Status = EfiBootManagerAddKeyOptionVariable (
-             NULL, (UINT16) BootOption.OptionNumber, 0, &F2, NULL
-             );
-  ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
-  Status = EfiBootManagerAddKeyOptionVariable (
-             NULL, (UINT16) BootOption.OptionNumber, 0, &Esc, NULL
-             );
+  PowerBtn.ScanCode    = SCAN_NULL;
+  PowerBtn.UnicodeChar = CHAR_CARRIAGE_RETURN;
+  Status = EfiBootManagerGetBootManagerMenu(&BootOption);
+  ASSERT_EFI_ERROR(Status);
+  Status = EfiBootManagerAddKeyOptionVariable(
+      NULL,
+      (UINT16) BootOption.OptionNumber,
+      0,
+      &PowerBtn,
+      NULL
+  );
   ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
 }
 
@@ -578,6 +607,14 @@ PlatformBootManagerBeforeConsole (
   // ErrOut.
   //
   FilterAndProcess (&gEfiGraphicsOutputProtocolGuid, NULL, AddOutput);
+
+  //
+  // Now add the device path of all handles with QcomKeypadDeviceProtocolGuid
+  // on them to ConIn.
+  //
+  FilterAndProcess (&gEFIDroidKeypadDeviceProtocolGuid, NULL, AddInput);
+// Register setup key then
+PlatformRegisterSetupKey();
 
   //
   // Add the hardcoded short-form USB keyboard device path to ConIn.
@@ -748,6 +785,7 @@ PlatformBootManagerWaitCallback (
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION White;
   UINT16                              Timeout;
   EFI_STATUS                          Status;
+  EFI_BOOT_MANAGER_LOAD_OPTION BootManagerMenu;
 
   Timeout = PcdGet16 (PcdPlatformBootTimeOut);
 
@@ -780,5 +818,4 @@ PlatformBootManagerUnableToBoot (
   VOID
   )
 {
-  return;
 }
