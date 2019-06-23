@@ -1,3 +1,4 @@
+# This branch contains a not working source. There seems to be a overflow somewhere in the emmc dirver.
 # Lumia930Pkg
 WIP Custom ARM UEFI firmware for Lumia930
 
