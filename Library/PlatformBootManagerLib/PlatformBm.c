@@ -526,42 +526,21 @@ PlatformRegisterOptionsAndKeys (
   VOID
   )
 {
-  GetPlatformOptions();
-
-  PlatformRegisterFvBootOption(
-      &gUefiShellFileGuid,
-      L"UEFI Shell",
-      LOAD_OPTION_ACTIVE
-  );
-}
-
-STATIC
-VOID
-PlatformRegisterSetupKey(
-  VOID
-)
-{
   EFI_STATUS                   Status;
   EFI_INPUT_KEY                PowerBtn;
   EFI_BOOT_MANAGER_LOAD_OPTION BootOption;
 
-  //
-  // Map Power to Boot Manager Menu
-  //
-  PowerBtn.ScanCode    = SCAN_NULL;
-  PowerBtn.UnicodeChar = CHAR_CARRIAGE_RETURN;
-  Status = EfiBootManagerGetBootManagerMenu(&BootOption);
-  ASSERT_EFI_ERROR(Status);
-  Status = EfiBootManagerAddKeyOptionVariable(
-      NULL,
-      (UINT16) BootOption.OptionNumber,
-      0,
-      &PowerBtn,
-      NULL
-  );
+  GetPlatformOptions ();
+
+  PowerBtn.ScanCode     = SCAN_NULL;
+  PowerBtn.UnicodeChar  = CHAR_CARRIAGE_RETURN;
+  Status = EfiBootManagerGetBootManagerMenu (&BootOption);
+  ASSERT_EFI_ERROR (Status);
+  Status = EfiBootManagerAddKeyOptionVariable (
+             NULL, (UINT16) BootOption.OptionNumber, 0, &PowerBtn, NULL
+             );
   ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
 }
-
 
 //
 // BDS Platform Functions
@@ -613,8 +592,6 @@ PlatformBootManagerBeforeConsole (
   // on them to ConIn.
   //
   FilterAndProcess (&gEFIDroidKeypadDeviceProtocolGuid, NULL, AddInput);
-// Register setup key then
-PlatformRegisterSetupKey();
 
   //
   // Add the hardcoded short-form USB keyboard device path to ConIn.
@@ -785,13 +762,10 @@ PlatformBootManagerWaitCallback (
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION White;
   UINT16                              Timeout;
   EFI_STATUS                          Status;
-  EFI_BOOT_MANAGER_LOAD_OPTION BootManagerMenu;
 
   Timeout = PcdGet16 (PcdPlatformBootTimeOut);
-
   Black.Raw = 0x00000000;
   White.Raw = 0x00FFFFFF;
-
   Status = BootLogoUpdateProgress (
              White.Pixel,
              Black.Pixel,
@@ -800,8 +774,9 @@ PlatformBootManagerWaitCallback (
              (Timeout - TimeoutRemain) * 100 / Timeout,
              0
              );
+  
   if (EFI_ERROR (Status)) {
-    Print (L".");
+    Print (L"ERROR");
   }
 }
 

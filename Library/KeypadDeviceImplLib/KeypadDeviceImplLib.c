@@ -32,12 +32,15 @@ STATIC KEY_CONTEXT_PRIVATE KeyContextPower;
 STATIC KEY_CONTEXT_PRIVATE KeyContextVolumeUp;
 STATIC KEY_CONTEXT_PRIVATE KeyContextVolumeDown;
 STATIC KEY_CONTEXT_PRIVATE KeyContextCamera;
+STATIC KEY_CONTEXT_PRIVATE KeyContextCameraFocus;
 
 STATIC KEY_CONTEXT_PRIVATE* KeyList[] = {
   &KeyContextPower,
   &KeyContextVolumeUp,
   &KeyContextVolumeDown,
-  &KeyContextCamera
+  &KeyContextCamera,
+  &KeyContextCameraFocus
+
 };
 
 STATIC
@@ -58,15 +61,18 @@ KeypadKeyCodeToKeyContext (
   UINT32 KeyCode
   )
 {
-  if (KeyCode == 114)
+  if (KeyCode == 114){
     return &KeyContextVolumeDown;
-  else if (KeyCode == 115)
+  }else if (KeyCode == 115){
     return &KeyContextVolumeUp;
-  else if (KeyCode == 116)
+  }else if (KeyCode == 116){
     return &KeyContextPower;
-  else if (KeyCode == 766)
+  }else if (KeyCode == 766){
     return &KeyContextCamera;
-  else
+  }else if (KeyCode == 528){
+
+    return &KeyContextCameraFocus;
+  }else
     return NULL;
 }
 
@@ -96,8 +102,14 @@ KeypadDeviceImplConstructor (
 
   StaticContext = KeypadKeyCodeToKeyContext(766);
   StaticContext->DeviceType = KEY_DEVICE_TYPE_PM8X41;
-  StaticContext->Gpio = 4;
+  StaticContext->Gpio = 3;
   StaticContext->ActiveLow = 0x1 & 0x1;
+  StaticContext->IsValid = TRUE;
+
+  StaticContext = KeypadKeyCodeToKeyContext(528);
+  StaticContext->DeviceType = KEY_DEVICE_TYPE_PM8X41;
+  StaticContext->Gpio = 4;
+  StaticContext->ActiveLow = 0x0 & 0x0;
   StaticContext->IsValid = TRUE;
 
   // Vol Down (114) and Power On (116) on through PMIC PON
@@ -168,7 +180,6 @@ EFI_STATUS KeypadDeviceImplGetKeys (KEYPAD_DEVICE_PROTOCOL *This, KEYPAD_RETURN_
     }
     if (RC != 0)
       continue;
-
     // update key status
     IsPressed = (GpioStatus ? 1 : 0) ^ Context->ActiveLow;
     LibKeyUpdateKeyStatus(&Context->EfiKeyContext, KeypadReturnApi, IsPressed, Delta);

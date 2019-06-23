@@ -17,8 +17,10 @@
 [Packages]
   MdePkg/MdePkg.dec
   ArmPkg/ArmPkg.dec
-  EFIDroidPkg/EFIDroidPkg.dec
-  EFIDroidPkg/Qcom/Qcom.dec
+  Lumia930Pkg/Lumia930Pkg.dec
 
 [LibraryClasses]
   QcomPlatformClockInitLib
+
+[BuildOptions.ARM]
+  GCC:*_*_*_CC_FLAGS = -Wno-pointer-to-int-cast -Wno-overflow -Werror=incompatible-pointer-types

@@ -1,0 +1,2 @@
+URL:    https://source.codeaurora.org/quic/la/kernel/lk
+BRANCH: LNX.LER.1.2-36500-8x74.0

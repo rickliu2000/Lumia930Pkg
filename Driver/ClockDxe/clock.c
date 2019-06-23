@@ -164,6 +164,7 @@ int clk_get_set_enable(char *id, unsigned long rate, bool enable)
 
 	/* Get clk */
 	cp = clk_get(id);
+    dprintf(CRITICAL, "Setting clock @ %u .\n", rate);
 	if(!cp)
 	{
 		dprintf(CRITICAL, "Can't find clock with id: %s\n", id);
@@ -177,7 +178,7 @@ int clk_get_set_enable(char *id, unsigned long rate, bool enable)
 		ret = clk_set_rate(cp, rate);
 		if(ret)
 		{
-			dprintf(CRITICAL, "Clock set rate failed.\n");
+			dprintf(CRITICAL, "Clock set rate failed @ %u .\n", rate);
 			goto get_set_enable_error;
 		}
 	}

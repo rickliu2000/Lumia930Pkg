@@ -95,7 +95,7 @@
   gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|19
   gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0xF9000000
   gArmTokenSpaceGuid.PcdGicDistributorBase|0xF9000000
-  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0xF9000000
+  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0xF9002000
   gArmPlatformTokenSpaceGuid.PcdCoreCount|4
 
   gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize|0x7CD00000 #0FF00000
@@ -135,6 +135,8 @@
   # SoC Drivers SPMI
   gQcomTokenSpaceGuid.PcdSpmiBaseAddress|0xFC4C0000
 
+  # SoC Drivers Misc
+  gQcomTokenSpaceGuid.PcdGicSpiStart|32
 
   ## Default Terminal Type
   ## 0-PCANSI, 1-VT100, 2-VT00+, 3-UTF8, 4-TTYTERM
@@ -244,6 +246,14 @@
   MallocLib|Lumia930Pkg/Library/MallocLib/MallocLib.inf
   KeypadDeviceHelperLib|Lumia930Pkg/Library/KeypadDeviceHelperLib/KeypadDeviceHelperLib.inf
   KeypadDeviceImplLib|Lumia930Pkg/Library/KeypadDeviceImplLib/KeypadDeviceImplLib.inf
+  DloadUtilLib|Lumia930Pkg/Library/DloadUtilLib/DloadUtilLib.inf
+  QcomPlatformClockInitLib|Lumia930Pkg/Library/QcomPlatformClockInitLib/QcomPlatformClockInitLib.inf
+  LcmLib|Lumia930Pkg/Library/LcmLib/LcmLib.inf
+  MicroLibC|Lumia930Pkg/Library/MicroLibC/MicroLibC.inf
+  StrLib|Lumia930Pkg/Library/StrLib/StrLib.inf
+  
+  # System Reset
+  EfiResetSystemLib|ArmPkg/Library/ArmPsciResetSystemLib/ArmPsciResetSystemLib.inf
 
 [LibraryClasses.common.SEC]
   HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
@@ -251,10 +261,12 @@
   PrePiMemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
   PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+  
   # SoC Drivers
   GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmImplLib.inf
   SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiImplLib.inf
   Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41ImplLib.inf
+  ClockLib|Lumia930Pkg/Driver/ClockDxe/ClockImplLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -279,6 +291,7 @@
   GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
   SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
   Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
+  ClockLib|Lumia930Pkg/Driver/ClockDxe/ClockImplLib.inf
 
 
 [LibraryClasses.common.UEFI_APPLICATION]
@@ -295,6 +308,7 @@
   GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
   SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
   Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
+  ClockLib|Lumia930Pkg/Driver/ClockDxe/ClockImplLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER]
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
@@ -309,13 +323,13 @@
   GpioTlmmLib|Lumia930Pkg/GPLDriver/GpioTlmmDxe/GpioTlmmLib.inf
   SpmiLib|Lumia930Pkg/Driver/SpmiDxe/SpmiLib.inf
   Pm8x41Lib|Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Lib.inf
+  ClockLib|Lumia930Pkg/Driver/ClockDxe/ClockImplLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
-  EfiResetSystemLib|ArmPkg/Library/ArmPsciResetSystemLib/ArmPsciResetSystemLib.inf
   ArmSmcLib|ArmPkg/Library/ArmSmcLib/ArmSmcLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
@@ -357,6 +371,7 @@
   Lumia930Pkg/Driver/Pm8x41Dxe/Pm8x41Dxe.inf
   Lumia930Pkg/Driver/GenericKeypadDeviceDxe/GenericKeypadDeviceDxe.inf
   Lumia930Pkg/Driver/KeypadDxe/KeypadDxe.inf
+  Lumia930Pkg/Driver/ClockDxe/ClockDxe.inf
 
 
 
