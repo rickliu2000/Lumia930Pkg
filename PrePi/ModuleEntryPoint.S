@@ -53,6 +53,22 @@ _ModuleEntryPoint:
   /* Invalidate TLB */
   bl ASM_PFX(ArmInvalidateTlb)
 
+  ldr r1, =0xFD901E14 //Address to write new fb address to
+  ldr r2, =0x7C400000 //Starting address of new fb
+  STR r2, [r1]
+
+  ldr r1, =0xFD902214 //Address to write new fb address to
+  ldr r2, =0x7C400000 //Starting address of new fb
+  STR r2, [r1]
+
+  ldr r1, =0xFD902A14 //Address to write new fb address to
+  ldr r2, =0x7C400000 //Starting address of new fb
+  STR r2, [r1]
+
+  ldr r1, =0xFD902E14 //Address to write new fb address to
+  ldr r2, =0x7C400000 //Starting address of new fb
+  STR r2, [r1]
+
 _SetupExceptionVector:
   LoadConstantToReg (FixedPcdGet32(PcdCpuVectorBaseAddress), r0)
   ldr r1, dead

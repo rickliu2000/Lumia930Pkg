@@ -29,6 +29,7 @@ enum FbConMsgType {
 };
 
 void ResetFb(void);
+void FindFbReg(void);
 
 UINTN
 EFIAPI

@@ -72,3 +72,4 @@
 
   gLumia930PkgTokenSpaceGuid.PcdPreAllocatedMemorySize
   gLumia930PkgTokenSpaceGuid.PcdUefiMemPoolSize
+  gLumia930PkgTokenSpaceGuid.PcdMipiFrameBufferAddress

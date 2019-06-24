@@ -47,6 +47,9 @@
 #define FB_ADDR                 0x400000
 #endif
 
+#define FB_ADDR_REG             0xFD901E14
+#define FB_NEW_ADDR             FixedPcdGet32(PcdMipiFrameBufferAddress)
+
 UINT64 mSystemMemoryEnd = FixedPcdGet64(PcdSystemMemoryBase) +
                           FixedPcdGet64(PcdSystemMemorySize) - 1;
 
@@ -56,7 +59,8 @@ UartInit
     VOID
 )
 {
-
+    char* newAddr = (void*)FB_ADDR_REG;
+    *newAddr = (unsigned char)FB_NEW_ADDR;
     SerialPortInitialize();
     DEBUG ((EFI_D_ERROR, "\nTianoCore on Nokia Lumia 930 (ARM)\n"));
     DEBUG ((EFI_D_ERROR,  "Firmware version %s built %a %a\n\n",

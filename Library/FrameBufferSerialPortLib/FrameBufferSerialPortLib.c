@@ -4,6 +4,7 @@
 #include <Library/CacheMaintenanceLib.h>
 #include <Library/HobLib.h>
 #include <Library/SerialPortLib.h>
+#include <Library/DebugLib.h>
 
 #include <Resources/font5x12.h>
 #include <Resources/FbColor.h>
@@ -58,6 +59,7 @@ SerialPortInitialize
 	ArmDisableInterrupts();
 
 	// Reset console
+	FindFbReg();
 	FbConReset();
 
 	// Set flag
@@ -88,6 +90,50 @@ void ResetFb(void)
 			}
 		}
 	}
+}
+
+void FindFbReg(void)
+{
+	// Clear current screen.
+	char* Pixels = (char*)0xFD990008;
+	UINTN BgColor = 0x7C400000;
+   *Pixels = BgColor;
+	// Set to black color.
+	/*
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD902214;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD902A14;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD902E14;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD903214;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD903614;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD901214;
+
+	*Pixels = (unsigned char)BgColor;
+	Pixels = (char *)0xFD901614;
+
+	*Pixels = (unsigned char)BgColor;
+	FD990008
+*/
+/*
+		for (UINTN i = 0; i < 10000; i++)
+	{
+	
+			// Set pixel bit
+				*Pixels = BgColor;
+				Pixels++;
+				DEBUG ((EFI_D_ERROR, "\nTianoCore on Nokia Lumia 930 (ARM)\n"));
+	}
+*/
 }
 
 void FbConReset(void)
