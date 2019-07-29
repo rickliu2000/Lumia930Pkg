@@ -208,8 +208,8 @@ static void sdhci_set_bus_power_on(struct sdhci_host *host)
 	//REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG);
     
 	voltage |= SDHCI_BUS_PWR_EN;
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "voltage0: %d @ 0x%p\n", voltage, host->base + SDHCI_PWR_CTRL_REG)); 
-	DBG("\n %s: voltage: 0x%02x\n", __func__, voltage);
+	//DBG("\n %s: voltage: 0x%02x\n", __func__, voltage);
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "voltage0: %d @ 0x%p\n", voltage, host->base + SDHCI_PWR_CTRL_REG)); 
     MmioWrite8((UINTN)(host->base + SDHCI_PWR_CTRL_REG), (UINT8)(voltage));
 	//REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG);
     DEBUG ((EFI_D_INFO | EFI_D_LOAD, "-------------------------------------\n")); 
@@ -414,6 +414,7 @@ static uint8_t sdhci_cmd_complete(struct sdhci_host *host, struct mmc_command *c
 		retry++;
 		udelay(1);
 		if (retry == SDHCI_MAX_CMD_RETRY) {
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Error: Command never completed\n"));
 			dprintf(CRITICAL, "Error: Command never completed\n");
 			ret = 1;
 			goto err;
@@ -483,6 +484,7 @@ static uint8_t sdhci_cmd_complete(struct sdhci_host *host, struct mmc_command *c
 			retry++;
 			udelay(1);
 			if (retry == max_trans_retry) {
+				DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Error: Command never completed\n"));
 				dprintf(CRITICAL, "Error: Transfer never completed\n");
 				ret = 1;
 				goto err;
@@ -519,6 +521,7 @@ err:
 		}
 		else if (sdhci_cmd_err_status(host))
 		{
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Error: sdhci_cmd_err\n"));
 			ret = 1;
 			/* Dump sdhc registers on error */
 			sdhci_dumpregs(host);
@@ -837,6 +840,7 @@ uint32_t sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
 	/* Command complete sequence */
 	if (sdhci_cmd_complete(host, cmd))
 	{
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Sequence not completed"));
 		ret = 1;
 		goto err;
 	}
@@ -851,13 +855,17 @@ uint32_t sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
 									(cmd->data.num_blocks * cmd->data.blk_sz) : \
 									(cmd->data.num_blocks * SDHCI_MMC_BLK_SZ));
 	}
-
+	//DEBUG ((EFI_D_INFO | EFI_D_LOAD, "\n %s: END: cmd:%04d, arg:0x%08x, resp:0x%08x 0x%08x 0x%08x 0x%08x\n",
+				//__func__, cmd->cmd_index, cmd->argument, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]));
 	DBG("\n %s: END: cmd:%04d, arg:0x%08x, resp:0x%08x 0x%08x 0x%08x 0x%08x\n",
 				__func__, cmd->cmd_index, cmd->argument, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
 err:
 	/* Free the scatter/gather list */
-	if (sg_list)
+	if (sg_list){
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Free"));
 		free(sg_list);
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Success] \n"));
+	}
 
 	return ret;
 }

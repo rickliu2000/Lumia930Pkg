@@ -625,12 +625,14 @@ static uint32_t mmc_get_ext_csd(struct sdhci_host *host, struct mmc_card *card)
 	struct mmc_command cmd;
 	uint32_t mmc_ret = 0;
 
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "memalign\n"));
 	card->ext_csd = memalign(CACHE_LINE, ROUNDUP(512, CACHE_LINE));
 
 	ASSERT(card->ext_csd);
 
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "memset0\n"));
 	memset(card->ext_csd, 0, sizeof(card->ext_csd));
-
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "memset1\n"));
 	memset((struct mmc_command *)&cmd, 0, sizeof(struct mmc_command));
 
 	/* CMD8 */
@@ -642,6 +644,7 @@ static uint32_t mmc_get_ext_csd(struct sdhci_host *host, struct mmc_card *card)
 	cmd.data_present = 0x1;
 	cmd.trans_mode = SDHCI_MMC_READ;
 
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Sending command\n"));
 	/* send command */
 	mmc_ret = sdhci_send_command(host, &cmd);
 	if (mmc_ret)
@@ -1460,13 +1463,13 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 	host = &dev->host;
 	card = &dev->card;
 	cfg  = &dev->config;
-
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "0 Initializing MMC card structure \n"));
 	/* Initialize MMC card structure */
 	card->status = MMC_STATUS_INACTIVE;
 
 	/* TODO: Get the OCR params from target */
 	card->ocr = MMC_OCR_27_36 | MMC_OCR_SEC_MODE;
-
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "1 Initializing the internal MMC \n"));
 	/* Initialize the internal MMC */
 	mmc_return = mmc_reset_card_and_send_op(host, card);
 	if (mmc_return)
@@ -1480,11 +1483,13 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 			return mmc_return;
 		}
 	}
-
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "2 Identifing (CMD2, CMD3 & CMD9) and select the card (CMD7)  \n"));
 	/* Identify (CMD2, CMD3 & CMD9) and select the card (CMD7) */
 	mmc_return = mmc_identify_card(host, card);
 	if (mmc_return)
 		return mmc_return;
+
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "3 Setting interface speed \n"));
 
 	/* set interface speed */
 	if (MMC_CARD_SD(card))
@@ -1505,12 +1510,15 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 		}
 	}
 
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "4 Getting the extended CSD for the card \n"));
+
 	/* Now get the extended CSD for the card */
 	if (MMC_CARD_MMC(card))
-	{
+	{			
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Getting extended csd \n"));
 			/* For MMC cards, also get the extended csd */
 			mmc_return = mmc_get_ext_csd(host, card);
-
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Success] \n"));
 			if (mmc_return) {
 				dprintf(CRITICAL, "Failure getting card's ExtCSD information!\n");
 				return mmc_return;
@@ -1518,19 +1526,25 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 	}
 	else
 	{
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Getting SCR for sd card \n"));
 		/*Read SCR for sd card */
 		if (mmc_sd_get_card_scr(host, card))
 		{
 			dprintf(CRITICAL, "Failure getting card's SCR register\n");
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Failed]\n"));
 			return 1;
 		}
 		/* Read SSR for the SD card */
 		if (mmc_sd_get_card_ssr(host, card))
 		{
 			dprintf(CRITICAL, "Failed to get SSR from the card\n");
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Failed]\n"));
 			return 1;
 		}
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Success]\n"));
 	}
+
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "5 Decoding and save the CSD register \n"));
 
 	/* Decode and save the CSD register */
 	mmc_return = mmc_decode_and_save_csd(card);
@@ -1539,6 +1553,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 		return mmc_return;
 	}
 
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "6 Set the bus width based on host, target capbilities \n"));
 
 	if (MMC_CARD_MMC(card))
 	{
@@ -1571,6 +1586,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 		if (host->caps.hs400_support && mmc_card_supports_hs400_mode(card))
 		{
 			dprintf(INFO, "SDHC Running in HS400 mode\n");
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "SDHC Running in HS400 mode \n"));
 			mmc_return = mmc_set_hs400_mode(host, card, bus_width);
 			if (mmc_return)
 			{
@@ -1584,6 +1600,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 			(!FeaturePcdGet(PcdMmcHs200Caps) && (host->caps.sdr104_support && mmc_card_supports_hs200_mode(card)))
 		)
 		{
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "SDHC Running in HS200 mode \n"));
 			dprintf(INFO, "SDHC Running in HS200 mode\n");
 			mmc_return = mmc_set_hs200_mode(host, card, bus_width);
 
@@ -1593,6 +1610,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 				return mmc_return;
 			}
 		} else if (host->caps.ddr_support && mmc_card_supports_ddr_mode(card)) {
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "SDHC Running in DDR mode \n"));
 			dprintf(INFO, "SDHC Running in DDR mode\n");
 			mmc_return = mmc_set_ddr_mode(host, card);
 
@@ -1602,6 +1620,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 				return mmc_return;
 			}
 		} else {
+			DEBUG ((EFI_D_INFO | EFI_D_LOAD, "SDHC Running in High Speed mode \n"));
 			dprintf(INFO, "SDHC Running in High Speed mode\n");
 			/* Set HS_TIMING mode */
 			mmc_return = mmc_set_hs_interface(host, card);
@@ -1645,6 +1664,7 @@ static uint32_t mmc_card_init(struct mmc_device *dev)
 
 
 	card->block_size = MMC_BLK_SZ;
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "7 Enabling RST_n_FUNCTION  \n"));
 
 	/* Enable RST_n_FUNCTION */
 	if (!card->ext_csd[MMC_EXT_CSD_RST_N_FUNC])
@@ -1695,7 +1715,7 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
     DEBUG ((EFI_D_INFO | EFI_D_LOAD, "0 ...Zzzzzzzzzzzz...\n"));
 	uint8_t mmc_ret = 0;
 	struct mmc_device *dev;
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "1 ...Zzzzzzzzzzzz...\n"));
+    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "1 Allocating mmc device\n"));
 	dev = (struct mmc_device *) malloc (sizeof(struct mmc_device));
 
 
@@ -1709,7 +1729,7 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
 	memcpy((void*)&dev->config, (void*)data, sizeof(struct mmc_config_data));
 
 	memset((struct mmc_card *)&dev->card, 0, sizeof(struct mmc_card));
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "3 ...Zzzzzzzzzzzz...\n"));
+    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "3 Initializing MMC host data structure and clock\n"));
 	/* Initialize the host & clock */
 	dprintf(SPEW, " Initializing MMC host data structure and clock!\n");
 
@@ -1718,7 +1738,7 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
 		dprintf(CRITICAL, "Error Initializing MMC host : %u\n", mmc_ret);
 		return NULL;
 	}
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "4 ...Zzzzzzzzzzzz...\n"));
+    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "4 Detecting MMC/SDC\n"));
 	/* Initialize and identify cards connected to host */
 	mmc_ret = mmc_card_init(dev);
 	if (mmc_ret) {
@@ -1726,11 +1746,11 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
 						  dev->config.slot);
 		return NULL;
 	}
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "5 ...Zzzzzzzzzzzz...\n"));
+    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "5 Done initialization of the card\n"));
 	dprintf(INFO, "Done initialization of the card\n");
 
 	mmc_display_csd(&dev->card);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "6 ...Zzzzzzzzzzzz...\n"));
+    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "6 Finished initialization of eMMC Driver\n"));
 	return dev;
 }
 
