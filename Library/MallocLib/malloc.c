@@ -110,7 +110,7 @@ VOID free(VOID *Ptr)
     if (Head->Signature == CPOOL_HEAD_SIGNATURE) {
       HeadSize = ALIGN_VALUE(sizeof(CPOOL_HEAD), Head->Boundary);
       NodeSize = HeadSize + Head->Size;
-      BaseMemory = Ptr - HeadSize + 0x4;
+      BaseMemory = Ptr - HeadSize;
 
       if (Head->Type == ALLOCTYPE_POOL)
         FreePool (BaseMemory);

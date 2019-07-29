@@ -136,6 +136,15 @@ Main
        DEBUG((EFI_D_INFO | EFI_D_LOAD, "MMU configured\n"));
     }
 
+    // Initialize GIC
+    Status = QGicPeim();
+    if (EFI_ERROR(Status))
+    {
+      DEBUG((EFI_D_ERROR, "Failed to configure GIC\n"));
+      CpuDeadLoop();
+    }
+    DEBUG((EFI_D_INFO | EFI_D_LOAD, "GIC configured\n"));
+
     DEBUG((
         EFI_D_INFO | EFI_D_LOAD,
         "SRC0_addrs 0= 0x%p, 1 = 0x%p, 2 = 0x%p, 3 = 0x%p\n 4 = 0x%p\n",

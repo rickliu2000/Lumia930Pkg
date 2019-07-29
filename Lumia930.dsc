@@ -134,9 +134,22 @@
 
   # SoC Drivers SPMI
   gQcomTokenSpaceGuid.PcdSpmiBaseAddress|0xFC4C0000
+  
+   # SoC Drivers MMC
+  gQcomTokenSpaceGuid.PcdSdccMciHcMode|0x00000078
+  gQcomTokenSpaceGuid.PcdSdccHcPwrctlStatusReg|0x000000DC
+  gQcomTokenSpaceGuid.PcdSdccHcPwrctlMaskReg|0x000000E0
+  gQcomTokenSpaceGuid.PcdSdccHcPwrctlClearReg|0x000000E4
+  gQcomTokenSpaceGuid.PcdSdccHcPwrctlCtlReg|0x000000E8
+  gQcomTokenSpaceGuid.PcdMmcSdhciDdrCfgVal|0x80040870 # DDR_CFG_DLY_VAL Not using here
+  gQcomTokenSpaceGuid.PcdMmcSdc1HdrvPullCtlOffset|0x00002044
+  gQcomTokenSpaceGuid.PcdMmcSdc2HdrvPullCtlOffset|0x00002048
 
   # SoC Drivers Misc
   gQcomTokenSpaceGuid.PcdGicSpiStart|32
+
+
+
 
   ## Default Terminal Type
   ## 0-PCANSI, 1-VT100, 2-VT00+, 3-UTF8, 4-TTYTERM
@@ -248,6 +261,9 @@
   KeypadDeviceImplLib|Lumia930Pkg/Library/KeypadDeviceImplLib/KeypadDeviceImplLib.inf
   DloadUtilLib|Lumia930Pkg/Library/DloadUtilLib/DloadUtilLib.inf
   QcomPlatformClockInitLib|Lumia930Pkg/Library/QcomPlatformClockInitLib/QcomPlatformClockInitLib.inf
+  QcomPlatformMmcLib|Lumia930Pkg/Library/PlatformMmcLib/QcomPlatformMmcLib.inf
+  QcomPlatformMmcClockOverrideLib|Lumia930Pkg/Library/QcomPlatformMmcClockOverrideLib/QcomPlatformMmcClockOverrideLib.inf
+  QcomTargetMmcSdhciLib|Lumia930Pkg/Library/TargetMmcSdhciLib/QcomTargetMmcSdhciLib.inf
   LcmLib|Lumia930Pkg/Library/LcmLib/LcmLib.inf
   MicroLibC|Lumia930Pkg/Library/MicroLibC/MicroLibC.inf
   StrLib|Lumia930Pkg/Library/StrLib/StrLib.inf
@@ -372,6 +388,7 @@
   Lumia930Pkg/Driver/GenericKeypadDeviceDxe/GenericKeypadDeviceDxe.inf
   Lumia930Pkg/Driver/KeypadDxe/KeypadDxe.inf
   Lumia930Pkg/Driver/ClockDxe/ClockDxe.inf
+  Lumia930Pkg/Driver/SdhciMMCHSDxe/SdhciMMCHS.inf
 
 
 
