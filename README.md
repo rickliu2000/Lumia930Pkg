@@ -9,3 +9,4 @@ EMMC MMU PMIC GPIO Working
 # TO-DO
 Move memory regions that occupies the first 128mb to higher location to leave space for memory map of the linux kernel on arm\
 Make mppark work by reparking the cores
+

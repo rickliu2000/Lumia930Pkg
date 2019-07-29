@@ -60,7 +60,7 @@ ArmPlatformGetVirtualMemoryMap (
     UINTN Index = 0;
 
     // Run through each memory descriptor
-    while (MemoryDescriptorEx->Length != 0)
+    while (MemoryDescriptorEx->Address != (EFI_PHYSICAL_ADDRESS)0xFFFFFFFF)
     {
         switch (MemoryDescriptorEx->HobOption)
         {
@@ -87,10 +87,6 @@ ArmPlatformGetVirtualMemoryMap (
 
     // Last one (terminator)
     ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
-    MemoryDescriptor[Index].PhysicalBase = 0;
-    MemoryDescriptor[Index].VirtualBase = 0;
-    MemoryDescriptor[Index].Length = 0;
-    MemoryDescriptor[Index].Attributes = 0;
     
     *VirtualMemoryMap = MemoryDescriptor;
   //ASSERT(0);

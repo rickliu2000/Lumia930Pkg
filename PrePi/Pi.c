@@ -75,7 +75,7 @@ UartInit
 
   DEBUG((
         EFI_D_INFO | EFI_D_LOAD,
-        "SRC0_addrs at 0x%p\n",
+        "SRC0 at 0x%p\n",
         MmioRead32(0xFD901EA4)
   )); 
 }
