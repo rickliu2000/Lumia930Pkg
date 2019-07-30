@@ -26,8 +26,8 @@ VOID LibQcomTargetMmcSdhciInit(INIT_SLOT_CB InitSlot)
 
     // Init eMMC slot
   
-    config.bus_width = DATA_BUS_WIDTH_8BIT;
-    config.max_clk_rate = MMC_CLK_192MHZ;
+    config.bus_width = DATA_BUS_WIDTH_4BIT;
+    config.max_clk_rate = MMC_CLK_200MHZ;
 
     /* Try slot 1 */
     config.slot = 1;

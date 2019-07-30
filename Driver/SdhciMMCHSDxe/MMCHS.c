@@ -8,7 +8,6 @@ STATIC struct mmc_device* PlatformCallbackInitSlot (struct mmc_config_data *conf
   // initialize MMC device
   struct mmc_device *dev = mmc_init (config);
   if (dev == NULL)
-  DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Null ...Zzzzzzzzzzzz...\n"));
     return NULL;
 DEBUG ((EFI_D_INFO | EFI_D_LOAD, "1 ...Zzzzzzzzzzzz...\n"));
   // allocate instance

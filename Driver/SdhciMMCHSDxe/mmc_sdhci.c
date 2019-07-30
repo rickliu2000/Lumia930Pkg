@@ -1695,6 +1695,13 @@ static void mmc_display_csd(struct mmc_card *card)
 	dprintf(SPEW, "wp_grpen: %d\n", card->csd.wp_grp_enable);
 	dprintf(SPEW, "perm_wp: %d\n", card->csd.perm_wp);
 	dprintf(SPEW, "temp_wp: %d\n", card->csd.temp_wp);
+
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "erase_grpsize: %d\n", card->csd.erase_grp_size));
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "erase_grpmult: %d\n", card->csd.erase_grp_mult));
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "wp_grpsize: %d\n", card->csd.wp_grp_size));
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "wp_grpen: %d\n", card->csd.wp_grp_enable));
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "perm_wp: %d\n", card->csd.perm_wp));
+	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "temp_wp: %d\n", card->csd.temp_wp));
 }
 
 /*
@@ -1735,6 +1742,7 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
 
 	mmc_ret = mmc_host_init(dev);
 	if (mmc_ret) {
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Error Initializing MMC host : %u\n", mmc_ret));
 		dprintf(CRITICAL, "Error Initializing MMC host : %u\n", mmc_ret);
 		return NULL;
 	}
@@ -1742,6 +1750,7 @@ struct mmc_device *mmc_init(struct mmc_config_data *data)
 	/* Initialize and identify cards connected to host */
 	mmc_ret = mmc_card_init(dev);
 	if (mmc_ret) {
+		DEBUG ((EFI_D_INFO | EFI_D_LOAD,"Failed detecting MMC/SDC @ slot%d\n", dev->config.slot));
 		dprintf(CRITICAL, "Failed detecting MMC/SDC @ slot%d\n",
 						  dev->config.slot);
 		return NULL;

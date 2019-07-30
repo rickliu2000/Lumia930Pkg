@@ -855,16 +855,16 @@ uint32_t sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
 									(cmd->data.num_blocks * cmd->data.blk_sz) : \
 									(cmd->data.num_blocks * SDHCI_MMC_BLK_SZ));
 	}
-	//DEBUG ((EFI_D_INFO | EFI_D_LOAD, "\n %s: END: cmd:%04d, arg:0x%08x, resp:0x%08x 0x%08x 0x%08x 0x%08x\n",
-				//__func__, cmd->cmd_index, cmd->argument, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]));
+	//DEBUG ((EFI_D_INFO | EFI_D_LOAD, "MMC Command: END: cmd:%04d, arg:0x%08x, resp:0x%08x 0x%08x 0x%08x 0x%08x\n",
+				// cmd->cmd_index, cmd->argument, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]));
 	DBG("\n %s: END: cmd:%04d, arg:0x%08x, resp:0x%08x 0x%08x 0x%08x 0x%08x\n",
 				__func__, cmd->cmd_index, cmd->argument, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
 err:
 	/* Free the scatter/gather list */
 	if (sg_list){
-		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Free"));
+		//DEBUG ((EFI_D_INFO | EFI_D_LOAD, "Free"));
 		free(sg_list);
-		DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Success] \n"));
+		//DEBUG ((EFI_D_INFO | EFI_D_LOAD, "[Success] \n"));
 	}
 
 	return ret;
