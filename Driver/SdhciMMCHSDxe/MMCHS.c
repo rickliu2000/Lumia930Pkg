@@ -4,26 +4,26 @@ STATIC struct mmc_device* PlatformCallbackInitSlot (struct mmc_config_data *conf
 {
   EFI_STATUS    Status;
   BIO_INSTANCE  *Instance;
-   DEBUG ((EFI_D_INFO | EFI_D_LOAD, "0 ...Zzzzzzzzzzzz...\n"));
+  
   // initialize MMC device
   struct mmc_device *dev = mmc_init (config);
   if (dev == NULL)
     return NULL;
-DEBUG ((EFI_D_INFO | EFI_D_LOAD, "1 ...Zzzzzzzzzzzz...\n"));
+
   // allocate instance
   Status = BioInstanceContructor (&Instance);
   if (EFI_ERROR(Status)) {
     return dev;
   }
-DEBUG ((EFI_D_INFO | EFI_D_LOAD, "2 ...Zzzzzzzzzzzz...\n"));
+
   // set data
   Instance->MmcDev               = dev;
   Instance->BlockMedia.BlockSize = dev->card.block_size;
   Instance->BlockMedia.LastBlock = dev->card.capacity/Instance->BlockMedia.BlockSize - 1;
-DEBUG ((EFI_D_INFO | EFI_D_LOAD, "3 ...Zzzzzzzzzzzz...\n"));
+
   // give every device a slighty different GUID
   Instance->DevicePath.Mmc.Guid.Data4[7] = config->slot;
-DEBUG ((EFI_D_INFO | EFI_D_LOAD, "4 ...Zzzzzzzzzzzz...\n"));
+
   // Publish BlockIO
   Status = gBS->InstallMultipleProtocolInterfaces (
               &Instance->Handle,

@@ -198,21 +198,19 @@ clk_ctrl:
  */
 static void sdhci_set_bus_power_on(struct sdhci_host *host)
 {
-	uint8_t voltage;
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "-------------------------------------\n")); 
+	uint8_t voltage; 
 	voltage = host->caps.voltage;
 
 	voltage <<= SDHCI_BUS_VOL_SEL;
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "voltage0: %d @ 0x%p\n", voltage, host->base + SDHCI_PWR_CTRL_REG));
-    MmioWrite8((UINTN)(host->base + SDHCI_PWR_CTRL_REG), (UINT8)(voltage));
-	//REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG);
+    //MmioWrite8((UINTN)(host->base + SDHCI_PWR_CTRL_REG), (UINT8)(voltage));
+	REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG);
     
 	voltage |= SDHCI_BUS_PWR_EN;
-	//DBG("\n %s: voltage: 0x%02x\n", __func__, voltage);
-	DEBUG ((EFI_D_INFO | EFI_D_LOAD, "voltage0: %d @ 0x%p\n", voltage, host->base + SDHCI_PWR_CTRL_REG)); 
-    MmioWrite8((UINTN)(host->base + SDHCI_PWR_CTRL_REG), (UINT8)(voltage));
-	//REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "-------------------------------------\n")); 
+
+	DBG("\n %s: voltage: 0x%02x\n", __func__, voltage);
+	
+    //MmioWrite8((UINTN)(host->base + SDHCI_PWR_CTRL_REG), (UINT8)(voltage));
+	REG_WRITE8(host, voltage, SDHCI_PWR_CTRL_REG); 
 }
 
 
@@ -938,22 +936,20 @@ void sdhci_init(struct sdhci_host *host)
 		host->use_cdclp533 = false;
 
 	/* Set bus power on */
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "PowerOnBus\n"));
 	sdhci_set_bus_power_on(host);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "00-----------------------------------\n")); 
+
 	/* Wait for power interrupt to be handled */
 	Status = gBS->WaitForEvent(1, &host->sdhc_event, &Index);
 	ASSERT_EFI_ERROR(Status);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "11-----------------------------------\n"));
+
 	/* Set bus width */
 	sdhci_set_bus_width(host, SDHCI_BUS_WITDH_1BIT);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "22-----------------------------------\n"));
+
 	/* Set Adma mode */
 	sdhci_set_adma_mode(host);
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "33-----------------------------------\n"));
+	
 	/*
 	 * Enable error status
 	 */
-    DEBUG ((EFI_D_INFO | EFI_D_LOAD, "44-----------------------------------\n"));
 	sdhci_error_status_enable(host);
 }
