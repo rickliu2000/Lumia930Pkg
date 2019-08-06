@@ -6,7 +6,10 @@ WIP Custom ARM UEFI firmware for Lumia930
 # Current Status
 EMMC MMU PMIC GPIO Working
 
-# TO-DO
-Move memory regions that occupies the first 128mb to higher location to leave space for memory map of the linux kernel on arm\
-Make mppark work by reparking the cores\
+# Linux Notes
+Linux kernel do boots but only recognizes one core and kernel may crash. Implementation of MpPark is needed in the firmware to make all four cores work.\
+You will need a device tree with the kernel.\
+Some development of the device specific device tree is needed.
 
+# TO-DO
+MpPark
