@@ -8,7 +8,7 @@ EMMC MMU PMIC GPIO Working
 
 # Linux Notes
 ![alt text](https://blog.rickliu.im/wp-content/uploads/2019/03/Four_Penguins.jpeg)
-Linux kernel do boots but crashes pretty soon.\
+Linux kernel do boot but crashes pretty soon.\
 All four cores are up after a recent update of bootshim\
 You will need a device tree with the kernel.\
 Some development of the device specific device tree is needed.\
